@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd">
+	<flow name="updateInviteeStatusListFlow" doc:id="8fcb6bdc-a7a2-46ab-9c56-4fe3f1cda43e" >
+		<http:listener doc:name="/updateinvistatlist" doc:id="d4a6f822-0093-4700-960b-ff11bde94150" config-ref="HTTP_Listener_config" path="/updateinvistatlist"/>
+		<ee:transform doc:name="input" doc:id="753ccc1b-13f7-4b99-870b-d30a141edbc8">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:core.platform.webservices.netsuite.com
+---
+{
+	ns01#updateInviteeStatusList: {
+		ns01#updateInviteeStatusReference: {
+			ns01#eventId @(internalId: 100986): null,
+			ns01#responseCode: "_tentative"
+		},
+		ns01#updateInviteeStatusReference: {
+			ns01#eventId @(internalId: 100985): null,
+			ns01#responseCode: "_accepted"
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:update-invitee-status-list doc:name="Update invitee status list" doc:id="94e1a61d-cfe4-411b-8f6e-a56d2bd1fcee" config-ref="NetSuite_Config" />
+		<ee:transform doc:name="to json" doc:id="b7cb6101-4255-4232-a316-4d442e96cfd8">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

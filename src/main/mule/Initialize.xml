@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd">
+	<flow name="InitializeFlow" doc:id="c703cb30-09ae-4083-9cd7-6be2e8375bea" >
+		<http:listener doc:name="/initialize" doc:id="18d1b5e6-424b-4701-860d-d36779f4dee2" config-ref="HTTP_Listener_config" path="/initialize"/>
+		<ee:transform doc:name="input" doc:id="a1c8fd09-fb49-4ba8-9849-5fc3890139fb">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:core.platform.webservices.netsuite.com
+---
+{
+	ns0#initialize: {
+		ns0#initializeRecord: {
+			ns01#"type": "invoice",
+			ns01#reference @(internalId: 11832 , "type": "salesOrder"): {
+				ns01#name: "SumInitialize"
+			}
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:initialize doc:name="Initialize" doc:id="4823d1e1-aada-4abf-87c1-41f4e0568c5e" config-ref="NetSuite_Config" />
+		<ee:transform doc:name="to json" doc:id="62fc2900-12d4-40a1-aa42-0863b32d6512">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

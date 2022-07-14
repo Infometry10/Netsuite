@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd">
+	<flow name="updateInviteeStatusFlow" doc:id="2752b48e-b94e-4b22-a8c7-416d2d291cc9" >
+		<http:listener doc:name="/updateinvistat" doc:id="8aa09fe0-9f9e-4722-909e-30a2932abcee" config-ref="HTTP_Listener_config" path="/updateinvistat"/>
+		<ee:transform doc:name="input" doc:id="081ca232-e493-496f-a96f-f3e915608cf2">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:core.platform.webservices.netsuite.com
+---
+{
+	ns01#updateInviteeStatus: {
+		ns01#updateInviteeStatusReference: {
+			ns01#eventId @(internalId: 100986): null,
+			ns01#responseCode: "_accepted"
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:update-invitee-status doc:name="Update invitee status" doc:id="368f1e7d-8636-4340-9113-50bb0e161d30" config-ref="NetSuite_Config" />
+		<ee:transform doc:name="to json" doc:id="1dbdde04-cfc0-4d1a-8b2a-921e3e635b3b">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

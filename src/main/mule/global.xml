@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+	<netsuite:config name="NetSuite_Config" doc:name="NetSuite Config" doc:id="084e128a-7035-43b4-a7f1-9791163d0317" >
+		<netsuite:token-based-authentication-connection consumerKey="${secure::Netsuite.CONSUMERKEY}" consumerSecret="${secure::Netsuite.CONSUMERSECRET}" tokenId="${secure::Netsuite.TOKENID}" tokenSecret="${secure::Netsuite.TOKENSECRET}" account="${secure::Netsuite.ACCOUNTID}" wsdlVersion="V2020_2" />
+	</netsuite:config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="e9f31915-12c6-4d41-b4b3-cdf014c7cf16" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="fdeeed73-8e39-45f9-b2cd-2a44b1a79023" file="${env}.yaml" key="${enc.key}" />
+</mule>

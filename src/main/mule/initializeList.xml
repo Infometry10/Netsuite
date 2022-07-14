@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="initializeListFlow" doc:id="7a614918-1b65-4e70-a7eb-860b454b1ca6" >
+		<http:listener doc:name="/initializelist" doc:id="9e70d3ee-fd2c-4ba5-b8d6-e8a3a9efb6b1" config-ref="HTTP_Listener_config" path="/initializelist"/>
+		<ee:transform doc:name="Transform Message" doc:id="e91e6a9a-d4a8-490d-a296-1bac53f4f3ce" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:core.platform.webservices.netsuite.com
+---
+{
+	ns0#initializeList: {
+		ns0#initializeRecord: {
+			ns01#"type": "invoice",
+			ns01#reference @("type": "salesOrder" , internalId: "11833"): {
+				ns01#name: "S1"
+			},
+			ns01#reference @("type": "salesOrder" , internalId: "11834"): {
+				ns01#name: "S2"
+			}
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:initialize-list doc:name="Initialize list" doc:id="fe45559b-d0d6-41a1-a2d2-21094e2938f0" config-ref="NetSuite_Config"/>
+		<ee:transform doc:name="Transform Message" doc:id="10bac8d4-c240-4a78-8683-fbd6c3281430" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
